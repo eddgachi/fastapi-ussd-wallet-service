@@ -15,15 +15,12 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
-      - uploads_data:/app/uploads
-      - qrcodes_data:/app/qrcodes
     working_dir: /app
 
   celery_worker:
     build:
       context: .
       dockerfile: Dockerfile
-    # point Celery at your app factory in core/celery_app.py
     command: celery -A core.celery_app worker --loglevel=info
     restart: unless-stopped
     env_file:
@@ -35,8 +32,6 @@ services:
         condition: service_healthy
     volumes:
       - .:/app
-      - uploads_data:/app/uploads
-      - qrcodes_data:/app/qrcodes
     working_dir: /app
 
   celery_beat:
@@ -73,16 +68,16 @@ services:
   db:
     image: postgres:15
     ports:
-      - '5433:5432'
+      - '5432:5432'
     restart: unless-stopped
     environment:
       POSTGRES_USER: fastapi_user
       POSTGRES_PASSWORD: fastapi_password
-      POSTGRES_DB: coffee_traceability
+      POSTGRES_DB: umoja_loans
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U fastapi_user -d coffee_traceability']
+      test: ['CMD-SHELL', 'pg_isready -U umoja_user -d umoja_loans']
       interval: 5s
       timeout: 5s
       retries: 5
@@ -90,5 +85,3 @@ services:
 volumes:
   redis_data:
   postgres_data:
-  uploads_data:
-  qrcodes_data:
