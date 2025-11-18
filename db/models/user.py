@@ -2,9 +2,8 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+from db.models import Base
 
 
 def generate_uuid():
@@ -23,5 +22,3 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    # Relationships would be defined here

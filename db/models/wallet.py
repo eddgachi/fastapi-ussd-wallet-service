@@ -2,8 +2,9 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Float, ForeignKey, String
+from sqlalchemy.orm import relationship
 
-from db.session import Base
+from db.models import Base
 
 
 class Wallet(Base):
@@ -17,3 +18,6 @@ class Wallet(Base):
     current_loan_limit = Column(Float, default=5000.0)  # Current available limit
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationship
+    user = relationship("User", backref="wallet")

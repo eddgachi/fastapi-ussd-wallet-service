@@ -26,3 +26,29 @@ Enhanced Features
     Payment Reminders (SMS/Celery tasks)
 
     Credit Scoring (basic algorithm)
+    
+    
+
+    
+# Generate initial migration (if this is your first time)
+docker compose exec web alembic revision --autogenerate -m "Initial migration"
+
+# Then run the migration
+docker compose exec web alembic upgrade head
+
+
+# Check migration history
+docker compose exec web alembic current
+
+# Check if tables were created (connect to PostgreSQL)
+docker compose exec db psql -U fastapi_user -d umoja_loans -c "\dt"
+
+
+# Check cooperatives
+docker compose exec db psql -U fastapi_user -d umoja_loans -c "SELECT name, country FROM cooperatives;"
+
+# Check users
+docker compose exec db psql -U fastapi_user -d umoja_loans -c "SELECT email, role FROM users;"
+
+# Check farmers
+docker compose exec db psql -U fastapi_user -d umoja_loans -c "SELECT registration_number, full_name FROM farmers;"

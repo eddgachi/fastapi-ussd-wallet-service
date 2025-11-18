@@ -2,8 +2,9 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Float, ForeignKey, String, Text
+from sqlalchemy.orm import relationship
 
-from db.session import Base
+from db.models import Base
 
 
 class Transaction(Base):
@@ -19,3 +20,7 @@ class Transaction(Base):
     status = Column(String(20), default="pending")  # pending, completed, failed
     description = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    user = relationship("User", backref="transactions")
+    loan = relationship("Loan", backref="transactions")

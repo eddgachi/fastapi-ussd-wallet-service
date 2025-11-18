@@ -2,31 +2,40 @@ import time
 
 from celery import shared_task
 
-from core.config import settings
-
 
 @shared_task
-def process_harvest_images(harvest_id: str):
-    """Background task to process harvest images"""
-    print(f"Processing images for harvest {harvest_id}")
-    # Simulate image processing
-    time.sleep(5)
-    return f"Processed images for {harvest_id}"
-
-
-@shared_task
-def generate_qr_code(batch_id: str, batch_code: str):
-    """Background task to generate QR code"""
-    print(f"Generating QR code for batch {batch_code}")
-    # Simulate QR code generation
+def send_sms_notification(phone_number: str, message: str):
+    """Background task to send SMS notifications"""
+    print(f"Sending SMS to {phone_number}: {message}")
+    # Simulate SMS sending (integrate with Africa's Talking or similar)
     time.sleep(2)
-    return f"Generated QR code for {batch_code}"
+    return f"SMS sent to {phone_number}"
 
 
 @shared_task
-def send_notification(user_id: str, message: str):
-    """Background task to send notifications"""
-    print(f"Sending notification to user {user_id}: {message}")
-    # Simulate notification sending
+def process_mpesa_payment(loan_id: str, amount: float, phone_number: str):
+    """Background task to process M-Pesa payments"""
+    print(
+        f"Processing M-Pesa payment for loan {loan_id}: KES {amount} to {phone_number}"
+    )
+    # Simulate M-Pesa payment processing
+    time.sleep(3)
+    return f"Processed payment for loan {loan_id}"
+
+
+@shared_task
+def update_loan_status(loan_id: str, new_status: str):
+    """Background task to update loan status"""
+    print(f"Updating loan {loan_id} to status: {new_status}")
+    # Simulate status update
     time.sleep(1)
-    return f"Notification sent to {user_id}"
+    return f"Updated loan {loan_id} to {new_status}"
+
+
+@shared_task
+def calculate_credit_score(user_id: str):
+    """Background task to calculate user credit score"""
+    print(f"Calculating credit score for user {user_id}")
+    # Simulate credit score calculation
+    time.sleep(5)
+    return f"Credit score calculated for user {user_id}"

@@ -8,7 +8,6 @@ celery_app = Celery(
     backend=settings.CELERY_RESULT_BACKEND,
     include=[
         "core.tasks",
-        "services.notification_service",
     ],
 )
 
@@ -21,13 +20,14 @@ celery_app.conf.update(
     enable_utc=True,
     task_routes={
         "core.tasks.*": {"queue": "main"},
-        "services.notification_service.*": {"queue": "notifications"},
+        "core.tasks.send_sms_notification": {"queue": "notifications"},
+        "core.tasks.process_mpesa_payment": {"queue": "payments"},
     },
     task_annotations={
-        "core.tasks.process_images": {"rate_limit": "10/m"},
-        "services.notification_service.send_sms_notification": {"rate_limit": "5/m"},
+        "core.tasks.send_sms_notification": {"rate_limit": "10/m"},
+        "core.tasks.process_mpesa_payment": {"rate_limit": "30/m"},
     },
 )
 
 # Import tasks to ensure they are registered
-from core import tasks
+from core import tasks  # noqa

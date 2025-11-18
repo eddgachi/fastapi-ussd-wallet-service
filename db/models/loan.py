@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from db.session import Base
+from db.models import Base
 
 
 class Loan(Base):
