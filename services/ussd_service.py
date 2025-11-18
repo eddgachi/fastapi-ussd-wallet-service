@@ -3,6 +3,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
+from core.tasks import calculate_credit_score, send_sms_notification
 from schemas.ussd import USSDRequest, USSDResponse
 from services.loan_service import LoanService
 from services.user_service import UserService
@@ -61,68 +62,6 @@ class USSDService:
                 should_close=True,
             )
 
-    def _handle_loan_application(self, user, parts, current_level, request):
-        if current_level == 1:
-            return USSDResponse(
-                session_id=request.session_id,
-                service_code=request.service_code,
-                message="Enter loan amount:",
-            )
-        elif current_level == 2:
-            try:
-                amount = float(parts[1])
-                return USSDResponse(
-                    session_id=request.session_id,
-                    service_code=request.service_code,
-                    message="Enter loan purpose:\n1. Emergency\n2. Business\n3. Education\n4. Other",
-                )
-            except ValueError:
-                return USSDResponse(
-                    session_id=request.session_id,
-                    service_code=request.service_code,
-                    message="Invalid amount. Please enter a valid number.",
-                    should_close=True,
-                )
-        elif current_level == 3:
-            purpose_map = {
-                "1": "Emergency",
-                "2": "Business",
-                "3": "Education",
-                "4": "Other",
-            }
-            purpose = purpose_map.get(parts[2], "General")
-            amount = float(parts[1])
-
-            # Create loan application
-            try:
-                loan_data = {
-                    "user_id": user.id,
-                    "amount": amount,
-                    "term_days": 30,  # Default 30 days
-                    "purpose": purpose,
-                }
-                loan = self.loan_service.create_loan_application(loan_data)
-
-                return USSDResponse(
-                    session_id=request.session_id,
-                    service_code=request.service_code,
-                    message=(
-                        f"Loan application received!\n"
-                        f"Amount: KES {amount:,.0f}\n"
-                        f"Purpose: {purpose}\n"
-                        f"Ref: {loan.id[:8]}\n"
-                        f"You will receive an SMS confirmation."
-                    ),
-                    should_close=True,
-                )
-            except ValueError as e:
-                return USSDResponse(
-                    session_id=request.session_id,
-                    service_code=request.service_code,
-                    message=f"Application failed: {str(e)}",
-                    should_close=True,
-                )
-
     def _handle_loan_status(self, user, request):
         loans = self.loan_service.get_user_loans(user.id)
         if not loans:
@@ -172,3 +111,52 @@ class USSDService:
             ),
             should_close=True,
         )
+
+    def _handle_loan_application(self, user, parts, current_level, request):
+        if current_level == 3:
+            purpose_map = {
+                "1": "Emergency",
+                "2": "Business",
+                "3": "Education",
+                "4": "Other",
+            }
+            purpose = purpose_map.get(parts[2], "General")
+            amount = float(parts[1])
+
+            try:
+                loan_data = {
+                    "user_id": user.id,
+                    "amount": amount,
+                    "term_days": 30,
+                    "purpose": purpose,
+                }
+                loan = self.loan_service.create_loan_application(loan_data)
+
+                # Send immediate SMS confirmation via Celery
+                send_sms_notification.delay(
+                    user.phone_number,
+                    f"Loan application received for KES {amount:,.0f}. Ref: {loan.id[:8]}. We'll notify you once processed.",
+                )
+
+                # Recalculate credit score in background
+                calculate_credit_score.delay(user.id)
+
+                return USSDResponse(
+                    session_id=request.session_id,
+                    service_code=request.service_code,
+                    message=(
+                        f"Loan application received!\n"
+                        f"Amount: KES {amount:,.0f}\n"
+                        f"Purpose: {purpose}\n"
+                        f"Ref: {loan.id[:8]}\n"
+                        f"You will receive an SMS confirmation."
+                    ),
+                    should_close=True,
+                )
+            except ValueError as e:
+                return USSDResponse(
+                    session_id=request.session_id,
+                    service_code=request.service_code,
+                    message=f"Application failed: {str(e)}",
+                    should_close=True,
+                )
