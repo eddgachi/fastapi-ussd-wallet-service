@@ -1,0 +1,27 @@
+# requirements.txt
+fastapi
+uvicorn[standard]
+sqlalchemy
+alembic
+psycopg2-binary
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt
+python-multipart
+pydantic[email]
+pydantic_settings
+celery
+redis
+pillow
+qrcode[pil]
+python-magic
+openpyxl
+pandas
+python-dateutil
+email-validator
+python-dotenv
+httpx
+pytest
+pytest-asyncio
+requests
+argon2_cffi

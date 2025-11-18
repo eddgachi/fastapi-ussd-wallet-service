@@ -1,0 +1,28 @@
+
+
+Features to Develop
+Core Features (MVP)
+
+    User Registration & Authentication via USSD
+
+    Loan Application through USSD menu
+
+    Loan Eligibility Check (basic rules-based)
+
+    M-Pesa Disbursement integration
+
+    Wallet System for loan management
+
+    Transaction History via USSD
+
+    Session Management for USSD flows
+
+Enhanced Features
+
+    Admin Dashboard (web-based for monitoring)
+
+    Loan Repayment via USSD
+
+    Payment Reminders (SMS/Celery tasks)
+
+    Credit Scoring (basic algorithm)
