@@ -42,3 +42,7 @@ class LoanResponse(LoanBase):
 
     class Config:
         from_attributes = True
+
+
+class LoanAdminResponse(LoanResponse):
+    repaid_date: Optional[datetime] = None

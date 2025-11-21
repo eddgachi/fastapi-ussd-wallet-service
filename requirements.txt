@@ -1,4 +1,3 @@
-# requirements.txt
 fastapi
 uvicorn[standard]
 sqlalchemy
@@ -25,3 +24,5 @@ pytest
 pytest-asyncio
 requests
 argon2_cffi
+slowapi
+pymemcache

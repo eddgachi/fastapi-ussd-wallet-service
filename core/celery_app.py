@@ -39,11 +39,6 @@ celery_app.conf.update(
             "task": "core.tasks.check_overdue_loans",
             "schedule": crontab(hour="*/6"),
         },
-        # Daily credit score recalculation at 2 AM
-        "recalculate-credit-scores": {
-            "task": "core.tasks.calculate_credit_score_batch",
-            "schedule": crontab(hour=2, minute=0),
-        },
     },
 )
 

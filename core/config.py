@@ -23,13 +23,25 @@ class Settings(BaseSettings):
     MPESA_CONSUMER_KEY: Optional[str] = None
     MPESA_CONSUMER_SECRET: Optional[str] = None
     MPESA_SHORTCODE: Optional[str] = None
+    MPESA_SHORTCODE: Optional[str] = None
+    MPESA_PASSKEY: Optional[str] = None
+    MPESA_CALLBACK_URL: Optional[str] = None
 
     # Africa's Talking USSD/SMS (for future integration)
     AT_API_KEY: Optional[str] = None
     AT_USERNAME: Optional[str] = None
 
-    # Environment
+    # Application
+    BASE_URL: str = "https://423c4b053dd8.ngrok-free.app"
     ENV: str = "development"
+
+    # Caching (Memcached)
+    MEMCACHED_HOST: str = "memcached"
+    MEMCACHED_PORT: int = 11211
+    MEMCACHED_EXPIRATION: int = 3600
+
+    # Rate Limiting
+    RATE_LIMIT_DEFAULT: str = "100/minute"
 
     class Config:
         env_file = ".env"

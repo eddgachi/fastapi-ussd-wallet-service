@@ -44,11 +44,11 @@ docker compose exec web alembic current
 docker compose exec db psql -U fastapi_user -d umoja_loans -c "\dt"
 
 
-# Check cooperatives
-docker compose exec db psql -U fastapi_user -d umoja_loans -c "SELECT name, country FROM cooperatives;"
+# Check wallets
+docker compose exec db psql -U fastapi_user -d umoja_loans -c "SELECT user_id, available_balance, loan_balance FROM wallets;"
 
 # Check users
-docker compose exec db psql -U fastapi_user -d umoja_loans -c "SELECT email, role FROM users;"
+docker compose exec db psql -U fastapi_user -d umoja_loans -c "SELECT phone_number, first_name FROM users;"
 
 # Check farmers
 docker compose exec db psql -U fastapi_user -d umoja_loans -c "SELECT registration_number, full_name FROM farmers;"

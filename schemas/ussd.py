@@ -1,15 +1,26 @@
-from pydantic import BaseModel
+from typing import Optional
+
+from pydantic import BaseModel, Field
 
 
 class USSDRequest(BaseModel):
-    session_id: str
-    service_code: str
-    phone_number: str
-    text: str = ""  # USSD input text
+    """USSD request from Africa's Talking"""
+
+    sessionId: str = Field(..., description="Unique session identifier")
+    serviceCode: str = Field(..., description="USSD code dialed")
+    phoneNumber: str = Field(..., description="User's phone number")
+    text: str = Field(default="", description="User input (* separated)")
+    networkCode: Optional[str] = Field(None, description="Mobile network code")
+
+    class Config:
+        populate_by_name = True
 
 
 class USSDResponse(BaseModel):
-    session_id: str
-    service_code: str
-    message: str
-    should_close: bool = False
+    """USSD response (for internal use only - not sent to Africa's Talking)"""
+
+    message: str = Field(..., description="Message to display to user")
+    should_close: bool = Field(default=False, description="Whether to close session")
+
+    class Config:
+        populate_by_name = True
